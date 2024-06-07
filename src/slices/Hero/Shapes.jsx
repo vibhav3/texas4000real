@@ -3,8 +3,9 @@
 
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { ContactShadows, Float, Environment, useGLTF } from "@react-three/drei";
+import { ContactShadows, Float, Environment } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { gsap } from "gsap";
 
 export function Shapes() {
@@ -91,7 +92,7 @@ function Geometries() {
     <>
       {geometries.map(({ position, r, geometry, type }) =>
         type === "model" ? (
-          <GLTFModel key={JSON.stringify(position)} position={position.map((p) => p * 2)} r={r} soundEffects={soundEffects} />
+          <STLModel key={JSON.stringify(position)} position={position.map((p) => p * 2)} r={r} soundEffects={soundEffects} />
         ) : (
           <Geometry
             key={JSON.stringify(position)} // Unique key
@@ -173,11 +174,17 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
   );
 }
 
-function GLTFModel({ position, r, soundEffects }) {
-  const { scene } = useGLTF('/model.stl'); // Adjust the path as necessary
-  const scale = [0.04 * r, 0.04 * r, 0.04 * r]; // Adjust the scaling factor as necessary
-  const [visible, setVisible] = useState(false);
+function STLModel({ position, r, soundEffects }) {
   const groupRef = useRef();
+  const [geometry, setGeometry] = useState(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const loader = new STLLoader();
+    loader.load("/model.stl", (geometry) => {
+      setGeometry(geometry);
+    });
+  }, []);
 
   function handleClick() {
     gsap.utils.random(soundEffects).play();
@@ -219,10 +226,19 @@ function GLTFModel({ position, r, soundEffects }) {
   }, []);
 
   return (
-    <group position={position} scale={scale} ref={groupRef}>
-      <Float speed={1 * r} rotationIntensity={1 * r} floatIntensity={1 * r}>
-        <primitive object={scene} onClick={handleClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut} visible={visible} />
-      </Float>
+    <group position={position} scale={[0.04 * r, 0.04 * r, 0.04 * r]} ref={groupRef}>
+      {geometry && (
+        <Float speed={1 * r} rotationIntensity={1 * r} floatIntensity={1 * r}>
+          <mesh
+            geometry={geometry}
+            onClick={handleClick}
+            onPointerOver={handlePointerOver}
+            onPointerOut={handlePointerOut}
+            visible={visible}
+            material={new THREE.MeshStandardMaterial({ color: 0x8e44ad, roughness: 0.1 })}
+          />
+        </Float>
+      )}
     </group>
   );
 }
