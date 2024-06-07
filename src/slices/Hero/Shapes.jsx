@@ -174,7 +174,7 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
 }
 
 function GLTFModel({ position, r, soundEffects }) {
-  const { scene } = useGLTF('/model.glb'); // Adjust the path as necessary
+  const { scene } = useGLTF('model.glb'); // Adjust the path as necessary
   const scale = [0.04 * r, 0.04 * r, 0.04 * r]; // Adjust the scaling factor as necessary
   const [visible, setVisible] = useState(false);
   const groupRef = useRef();
