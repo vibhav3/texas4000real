@@ -37,27 +37,27 @@ export function Shapes() {
 function Geometries() {
   const geometries = [
     {
-      position: [1, -0.75, 4],
+      position: [1, -0.9, 5],
       r: 0.4,
-      geometry: new THREE.CapsuleGeometry(0.5, 1.6, 2, 16), // Pill
+      geometry: new THREE.CapsuleGeometry(0.3, 0.7, 2, 16), // Pill
     },
     {
       position: [-1.4, 2, -4],
       r: 0.6,
-      geometry: new THREE.DodecahedronGeometry(1.5), // Soccer ball
+      geometry: new THREE.DodecahedronGeometry(0.9), // Soccer ball
     },
     {
-      position: [-0.8, -0.75, 5],
+      position: [-0.8, -0.9, 4],
       r: 0.5,
-      geometry: new THREE.TorusGeometry(0.6, 0.25, 16, 32), // Donut
+      geometry: new THREE.TorusGeometry(0.3, 0.25, 16, 32), // Donut
     },
     {
       position: [1.6, 1.6, -4],
       r: 0.7,
-      geometry: new THREE.OctahedronGeometry(1.5), // Diamond
+      geometry: new THREE.OctahedronGeometry(1.0), // Diamond
     },
     {
-      position: [0, -0.3, 0],
+      position: [0, 0, 0],
       r: 0.5,
       type: "model",
     }
@@ -181,14 +181,21 @@ function STLModel({ position, r, soundEffects }) {
 
   useEffect(() => {
     const loader = new STLLoader();
-    loader.load("/model.stl", (geometry) => {
-      setGeometry(geometry);
-    });
+    loader.load(
+      "/model2.stl",
+      (geometry) => {
+        setGeometry(geometry);
+      },
+      undefined,
+      (error) => {
+        console.error('An error happened while loading the STL file:', error);
+      }
+    );
   }, []);
 
   function handleClick() {
     gsap.utils.random(soundEffects).play();
-  
+
     gsap.to(groupRef.current.rotation, {
       x: `+=${getRandomRotation()}`, // Random rotation around the x-axis
       y: `+=${getRandomRotation()}`, // Random rotation around the y-axis
@@ -196,10 +203,11 @@ function STLModel({ position, r, soundEffects }) {
       ease: "elastic.out(1,0.3)",
       yoyo: true,
     });
+
     function getRandomRotation() {
-        // Generate a random rotation between -30 and 30 degrees to prevent upside-down rotations
-        return gsap.utils.random(-2, 2);
-      }
+      // Generate a random rotation between -2 and 2 radians to prevent extreme rotations
+      return gsap.utils.random(-2, 2);
+    }
   }
 
   const handlePointerOver = () => {
@@ -226,7 +234,12 @@ function STLModel({ position, r, soundEffects }) {
   }, []);
 
   return (
-    <group position={position} scale={[0.04 * r, 0.04 * r, 0.04 * r]} ref={groupRef}>
+    <group
+      position={position}
+      scale={[0.04 * r, 0.04 * r, 0.04 * r]}
+      ref={groupRef}
+      rotation={[0, Math.PI / -5, 0]} // Initial askew rotation
+    >
       {geometry && (
         <Float speed={1 * r} rotationIntensity={1 * r} floatIntensity={1 * r}>
           <mesh
@@ -235,7 +248,7 @@ function STLModel({ position, r, soundEffects }) {
             onPointerOver={handlePointerOver}
             onPointerOut={handlePointerOut}
             visible={visible}
-            material={new THREE.MeshStandardMaterial({ color: 0x8e44ad, roughness: 0.1 })}
+            material={new THREE.MeshStandardMaterial({ color: 0x4AF400, roughness: 0.1 })}
           />
         </Float>
       )}
