@@ -56,9 +56,9 @@ function Geometries() {
       geometry: new THREE.OctahedronGeometry(1.5), // Diamond
     },
     {
-      position: [0, 0, 0],
+      position: [0, -0.3, 0],
       r: 0.5,
-      geometry: new THREE.TorusKnotGeometry(1, 0.25, 16, 32),
+      type: "model",
     }
   ];
 
@@ -174,7 +174,7 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
 }
 
 function GLTFModel({ position, r, soundEffects }) {
-  const { scene } = useGLTF('model.glb'); // Adjust the path as necessary
+  const { scene } = useGLTF('/model.glb'); // Adjust the path as necessary
   const scale = [0.04 * r, 0.04 * r, 0.04 * r]; // Adjust the scaling factor as necessary
   const [visible, setVisible] = useState(false);
   const groupRef = useRef();
@@ -226,4 +226,3 @@ function GLTFModel({ position, r, soundEffects }) {
     </group>
   );
 }
-
