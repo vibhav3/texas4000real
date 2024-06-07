@@ -1,3 +1,6 @@
+// components/Shapes.jsx
+"use client";
+
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { ContactShadows, Float, Environment, useGLTF } from "@react-three/drei";
@@ -53,9 +56,9 @@ function Geometries() {
       geometry: new THREE.OctahedronGeometry(1.5), // Diamond
     },
     {
-      position: [0, -0.3, 0],
+      position: [0, 0, 0],
       r: 0.5,
-      type: "model",
+      geometry: new THREE.TorusKnotGeometry(1, 0.25, 16, 32),
     }
   ];
 
@@ -88,9 +91,7 @@ function Geometries() {
     <>
       {geometries.map(({ position, r, geometry, type }) =>
         type === "model" ? (
-          <Suspense key={JSON.stringify(position)} fallback={null}>
-            <GLTFModel position={position.map((p) => p * 2)} r={r} soundEffects={soundEffects} />
-          </Suspense>
+          <GLTFModel key={JSON.stringify(position)} position={position.map((p) => p * 2)} r={r} soundEffects={soundEffects} />
         ) : (
           <Geometry
             key={JSON.stringify(position)} // Unique key
@@ -108,6 +109,7 @@ function Geometries() {
 
 function Geometry({ r, position, geometry, soundEffects, materials }) {
   const meshRef = useRef();
+  const [visible, setVisible] = useState(false);
 
   const startingMaterial = getRandomMaterial();
 
@@ -138,4 +140,90 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
 
   const handlePointerOut = () => {
     document.body.style.cursor = "default";
- 
+  };
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      setVisible(true);
+      gsap.from(meshRef.current.scale, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: gsap.utils.random(0.8, 1.2),
+        ease: "elastic.out(1,0.3)",
+        delay: gsap.utils.random(0, 0.5),
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <group position={position} ref={meshRef}>
+      <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r}>
+        <mesh
+          geometry={geometry}
+          onClick={handleClick}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+          visible={visible}
+          material={startingMaterial}
+        ></mesh>
+      </Float>
+    </group>
+  );
+}
+
+function GLTFModel({ position, r, soundEffects }) {
+  const { scene } = useGLTF('model.glb'); // Adjust the path as necessary
+  const scale = [0.04 * r, 0.04 * r, 0.04 * r]; // Adjust the scaling factor as necessary
+  const [visible, setVisible] = useState(false);
+  const groupRef = useRef();
+
+  function handleClick() {
+    gsap.utils.random(soundEffects).play();
+  
+    gsap.to(groupRef.current.rotation, {
+      x: `+=${getRandomRotation()}`, // Random rotation around the x-axis
+      y: `+=${getRandomRotation()}`, // Random rotation around the y-axis
+      duration: 1.3,
+      ease: "elastic.out(1,0.3)",
+      yoyo: true,
+    });
+    function getRandomRotation() {
+        // Generate a random rotation between -30 and 30 degrees to prevent upside-down rotations
+        return gsap.utils.random(-2, 2);
+      }
+  }
+
+  const handlePointerOver = () => {
+    document.body.style.cursor = "pointer";
+  };
+
+  const handlePointerOut = () => {
+    document.body.style.cursor = "default";
+  };
+
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      setVisible(true);
+      gsap.from(groupRef.current.scale, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: gsap.utils.random(0.8, 1.2),
+        ease: "elastic.out(1,0.3)",
+        delay: gsap.utils.random(0, 0.5),
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <group position={position} scale={scale} ref={groupRef}>
+      <Float speed={1 * r} rotationIntensity={1 * r} floatIntensity={1 * r}>
+        <primitive object={scene} onClick={handleClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut} visible={visible} />
+      </Float>
+    </group>
+  );
+}
+
