@@ -12,15 +12,15 @@ export type ImageBlockProps = SliceComponentProps<Content.ImageBlockSlice>;
  */
 const ImageBlock = ({ slice }: ImageBlockProps): JSX.Element => {
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <PrismicNextImage 
         field={slice.primary.image} 
         imgixParams={{ w: 600 }}
-        style={{ width: '300px', height: 'auto' }} 
+        style={{ width: '500px', height: 'auto', marginBottom: '8px' }} // Reduced margin-bottom
       />
-      <h2>
+      <h6 style={{ marginBottom: '40px' }}> {/* Added space below the caption */}
         {slice.primary.caption}
-      </h2>
+      </h6>
     </div>
   );
 };
