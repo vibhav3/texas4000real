@@ -6,7 +6,6 @@ import { Content, KeyTextField, asLink } from "@prismicio/client";
 import { PrismicNextLink } from "@prismicio/next";
 import Link from "next/link";
 import { MdMenu, MdClose } from "react-icons/md";
-import Button from "./button";
 import { usePathname } from "next/navigation";
 
 export default function NavBar({
@@ -81,12 +80,22 @@ export default function NavBar({
               )}
             </React.Fragment>
           ))}
-          <li>
-            <Button
-              linkField={settings.data.cta_link}
-              label={settings.data.cta_label}
-              className="ml-3"
-            />
+          {/* Add Donate link for mobile menu */}
+          <li className="first:mt-8">
+            <Link
+              href="https://texas4000-bloom.kindful.com/2025-team-fundraising-2024/vibhav-iyengar1"
+              className={clsx(
+                "group relative block overflow-hidden rounded px-3 text-3xl font-bold text-slate-900 ",
+              )}
+              onClick={() => setOpen(false)}
+            >
+              <span
+                className={clsx(
+                  "absolute inset-0 z-0 h-full translate-y-12 rounded bg-blue-300 transition-transform duration-300 ease-in-out group-hover:translate-y-0",
+                )}
+              />
+              <span className="relative">Donate</span>
+            </Link>
           </li>
         </div>
         <DesktopMenu settings={settings} pathname={pathname} />
@@ -149,12 +158,21 @@ function DesktopMenu({
           )}
         </React.Fragment>
       ))}
+      {/* Add Donate link for desktop menu */}
       <li>
-        <Button
-          linkField={settings.data.cta_link}
-          label={settings.data.cta_label}
-          className="ml-3"
-        />
+        <Link
+          href="https://texas4000-bloom.kindful.com/2025-team-fundraising-2024/vibhav-iyengar1"
+          className={clsx(
+            "group relative block overflow-hidden rounded px-3 py-1 text-base font-bold text-slate-900",
+          )}
+        >
+          <span
+            className={clsx(
+              "absolute inset-0 z-0 h-full rounded bg-yellow-300 transition-transform  duration-300 ease-in-out group-hover:translate-y-0",
+            )}
+          />
+          <span className="relative">Donate</span>
+        </Link>
       </li>
     </div>
   );
