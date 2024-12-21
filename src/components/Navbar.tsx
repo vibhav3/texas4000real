@@ -83,7 +83,7 @@ export default function NavBar({
           {/* Add Donate link for mobile menu */}
           <li className="first:mt-8">
             <Link
-              href="https://texas4000-bloom.kindful.com/2025-team-fundraising-2024/vibhav-iyengar1"
+              href="https://secure.qgiv.com/event/texas4000p2p/account/1874649/"
               className={clsx(
                 "group relative block overflow-hidden rounded px-3 text-3xl font-bold text-slate-900 ",
               )}
@@ -161,7 +161,7 @@ function DesktopMenu({
       {/* Add Donate link for desktop menu */}
       <li>
         <Link
-          href="https://texas4000-bloom.kindful.com/2025-team-fundraising-2024/vibhav-iyengar1"
+          href="https://secure.qgiv.com/event/texas4000p2p/account/1874649/"
           className={clsx(
             "group relative block overflow-hidden rounded px-3 py-1 text-base font-bold text-slate-900",
           )}
